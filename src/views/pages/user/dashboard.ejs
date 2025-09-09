@@ -14,16 +14,7 @@
 </nav>
 
 <% 
-  // Ambil query param 'tab' dari URL. Jika tidak ada, default ke 'apikey'
-  // Kita perlu cara untuk mengirim data ini ke JS di client, atau mengaturnya di server.
-  // Cara termudah adalah mengatur kelas 'hidden' langsung dari EJS.
-
-  // Ambil query dari controller (jika dikirim) atau dari URL (jika ada)
-  // Cara termudah: Controller harus mengirimkan query param ke view.
-  // Mari kita asumsikan controller BELUM mengirimkannya, kita ambil dari 'locals' (Express otomatis menyediakannya)
   const activeTab = locals.query.tab || 'apikey'; 
-  
-  // Ambil pesan error/sukses dari query param (untuk notifikasi)
   const errorMsg = locals.query.error || null;
   const successMsg = locals.query.success || null;
 %>

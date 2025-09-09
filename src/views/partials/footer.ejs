@@ -1,2 +1,43 @@
+<footer class="bg-gray-50 border-t border-gray-200">
+        <div class="container mx-auto px-6 py-8">
+            <div class="flex flex-col items-center sm:flex-row sm:justify-between">
+                <p class="text-sm text-gray-500">
+                    © <%= new Date().getFullYear() %> API MhCloud. Dibuat dengan Node.js & Prisma.
+                </p>
+                <div class="flex mt-4 sm:mt-0 space-x-6">
+                    <a href="/" class="text-sm text-gray-500 hover:text-gray-900">Home</a>
+                    <a href="/docs" class="text-sm text-gray-500 hover:text-gray-900">Dokumentasi</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const hamburgerBtn = document.getElementById('hamburger-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        if(hamburgerBtn && mobileMenu) {
+            hamburgerBtn.addEventListener('click', () => {
+              mobileMenu.classList.toggle('hidden');
+            });
+        }
+      });
+    </script>
+
+    <script>
+      const adminHamburgerBtn = document.getElementById('admin-hamburger-btn');
+      const adminMobileMenu = document.getElementById('admin-mobile-menu');
+      const iconOpen = document.getElementById('icon-menu-open');
+      const iconClose = document.getElementById('icon-menu-close');
+
+      if (adminHamburgerBtn) {
+        adminHamburgerBtn.addEventListener('click', () => {
+          adminMobileMenu.classList.toggle('hidden');
+          iconOpen.classList.toggle('hidden');
+          iconClose.classList.toggle('hidden');
+        });
+      }
+    </script>
 </body>
-</html> 
+</html>

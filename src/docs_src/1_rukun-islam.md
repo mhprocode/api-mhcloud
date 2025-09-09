@@ -1,4 +1,4 @@
-## Data Islami
+# Rukun Islam dan Rukun Iman.
 
 Mengembalikan data JSON terstruktur mengenai Rukun Islam dan Rukun Iman.
 
@@ -19,3 +19,4 @@ Contoh Response (Sukses 200):
         "rukun_iman": [ ... ]
     }
 }
+```

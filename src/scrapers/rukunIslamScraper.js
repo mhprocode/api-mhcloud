@@ -1,4 +1,3 @@
-// Data ini statis. Jika Anda perlu scraping, logika axios/cheerio masuk di sini.
 const data = {
     rukun_islam: [
         { nomor: 1, nama: "Syahadat", keterangan: "Mengucapkan dua kalimat syahadat." },
@@ -17,8 +16,6 @@ const data = {
     ]
 };
 
-// Kita buat async untuk mensimulasikan proses (seperti scraping/DB query)
 export const getRukunDataStatic = async () => {
-    // Jika ini scraper, di sinilah letak: const html = await axios.get(...)
     return Promise.resolve(data);
 };

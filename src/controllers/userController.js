@@ -2,82 +2,66 @@ import prisma from '../../db.js';
 import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
-import fs from 'fs'; // <--- INI YANG MENYEBABKAN ERROR (KARENA HILANG)
+import fs from 'fs'; 
 import { marked } from 'marked';
 import { fileURLToPath } from 'url';
 import requestIp from 'request-ip';
-// Helper ini juga penting untuk 'path.join'
+import os from 'os';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Definisi Role (penting agar konsisten)
 const ROLES_POLICY = {
     FREE: {
-        monthlyLimit: 100, // 1000 hits/bulan
-        expiresAt: null // Gratis selamanya
+        monthlyLimit: 100, 
+        expiresAt: null 
     },
     PREMIUM: {
-        monthlyLimit: 50000, // 50.000 hits/bulan
-        // Di dunia nyata, tanggal expired di-set saat pembayaran berhasil
-        // Ini contoh: Premium valid selama 1 tahun dari sekarang
+        monthlyLimit: 50000, 
         expiresAt: new Date(new Date().setFullYear(new Date().getFullYear() + 1)) 
     }
 };
 
-
-// --- GET PAGES ---
-// Menampilkan halaman Register
 export const getRegisterPage = (req, res) => {
-    if (req.session && req.session.userId) return res.redirect('/dashboard'); // Jika sudah login, lempar ke dashboard
+    if (req.session && req.session.userId) return res.redirect('/dashboard'); 
     res.render('pages/public/register', { error: null, layout: 'public' });
 };
 
-// Menampilkan halaman Login User
 export const getLoginPage = (req, res) => {
-    if (req.session && req.session.userId) return res.redirect('/dashboard'); // Jika sudah login, lempar ke dashboard
+    if (req.session && req.session.userId) return res.redirect('/dashboard');
     res.render('pages/public/login', { error: null, layout: 'public' });
 };
 
-// Menampilkan dashboard User (setelah login)
 export const getDashboard = async (req, res) => {
-    // Ambil data user dari DB. Kita membutuhkannya untuk TAB PROFIL,
-    // bahkan jika query API Key gagal.
     let user;
     try {
         user = await prisma.user.findUnique({ where: { id: req.session.userId } });
         if (!user) {
-            // Jika user di session tidak ada di DB, paksa logout
             return req.session.destroy(() => res.redirect('/login'));
         }
     } catch (e) {
-         // Jika DB error saat ambil user, kita tidak bisa lanjut
          console.error("Dashboard Error (gagal ambil user):", e);
          return res.render('pages/public/login', { error: 'Gagal memuat data user. Silakan login ulang.' });
     }
 
-    // Sekarang coba ambil API Key
     try {
         const apiKeyData = await prisma.apiKey.findUnique({
             where: { userId: req.session.userId }
-            // Kita tidak perlu "include: { user: true }" lagi, karena kita sudah ambil data user di atas
         });
         
         if (!apiKeyData) {
-           // Jika user ada tapi key tidak ada (seharusnya tidak terjadi jika register benar)
            return res.render('pages/user/dashboard', { 
                error: 'API Key tidak ditemukan. Hubungi admin.', 
                key: null, 
-               user: user, // Kirim data user yang sudah kita ambil
-               query: req.query // <-- PERBAIKAN UTAMA: Kirim query object
+               user: user,
+               query: req.query 
            });
         }
         
-        // Cek reset bulanan
         const daysSinceReset = (new Date() - new Date(apiKeyData.lastReset)) / (1000 * 60 * 60 * 24);
         let keyToRender = apiKeyData;
 
         if (daysSinceReset > 30) {
-             // Sudah waktunya reset bulanan. Update DB.
              keyToRender = await prisma.apiKey.update({
                 where: { id: apiKeyData.id },
                 data: { 
@@ -89,28 +73,23 @@ export const getDashboard = async (req, res) => {
         
         res.render('pages/user/dashboard', { 
             key: keyToRender, 
-            user: user, // Kirim data user
-            error: null, // Tidak ada error
-            query: req.query // <-- PERBAIKAN UTAMA: Kirim query object
+            user: user,
+            error: null, 
+            query: req.query 
         });
         
     } catch (error) {
          console.error("Dashboard Error (gagal ambil key):", error);
-         // Jika GAGAL ambil key, setidaknya render halaman (TAB PROFIL masih bisa diakses)
          res.render('pages/user/dashboard', { 
              error: 'Gagal memuat data API Key.', 
              key: null, 
-             user: user, // Tetap kirim data user
-             query: req.query // <-- PERBAIKAN UTAMA: Kirim query object
+             user: user,
+             query: req.query
          });
     }
 };
 
-// --- POST ACTIONS ---
-
-// Logika untuk memproses registrasi
 export const postRegister = async (req, res) => {
-    // Ambil field baru dari body
     const { name, email, phone, password } = req.body;
     
     if (!name || !email || !password) {
@@ -125,21 +104,19 @@ export const postRegister = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
         
-        // Tentukan role (default FREE)
         const role = 'FREE';
         const policy = ROLES_POLICY[role];
         
-        // Buat User DAN ApiKey dalam satu transaksi database
         const newUser = await prisma.user.create({
             data: {
-                name: name,         // <-- DATA BARU
+                name: name,
                 email: email,
-                phone: phone || null, // <-- DATA BARU (null jika kosong)
+                phone: phone || null, 
                 password: hashedPassword,
                 role: role,
-                apiKey: { // Buat ApiKey yang terhubung secara otomatis
+                apiKey: { 
                     create: {
-                        key: `API-USER-${uuidv4()}`, // Key unik baru
+                        key: `API-MhCloud-${uuidv4()}`, 
                         monthlyLimit: policy.monthlyLimit,
                         expiresAt: policy.expiresAt,
                         lastReset: new Date()
@@ -148,10 +125,9 @@ export const postRegister = async (req, res) => {
             }
         });
 
-        // Setelah sukses register, langsung loginkan user
         req.session.userId = newUser.id;
-        req.session.userEmail = newUser.email; // Simpan email di session (penting untuk update profil)
-        res.redirect('/dashboard'); // Arahkan ke dashboard USER
+        req.session.userEmail = newUser.email;
+        res.redirect('/dashboard');
 
     } catch (error) {
         console.error("Register Error:", error);
@@ -159,7 +135,6 @@ export const postRegister = async (req, res) => {
     }
 };
 
-// Logika untuk memproses login user
 export const postLogin = async (req, res) => {
      const { email, password } = req.body;
     try {
@@ -168,56 +143,48 @@ export const postLogin = async (req, res) => {
             return res.render('pages/public/login', { error: 'Email tidak ditemukan' });
         }
 
-        // --- TAMBAHAN BARU: CEK BAN ---
+   
         if (user.isBanned) {
              return res.render('pages/public/login', { error: 'Akun Anda telah diblokir. Silakan hubungi support.' });
         }
-        // --- AKHIR TAMBAHAN ---
+       
 
         const validPass = await bcrypt.compare(password, user.password);
         if (!validPass) {
             return res.render('pages/public/login', { error: 'Password salah' });
         }
 
-        // Sukses Login: Simpan di Session
         req.session.userId = user.id;
         req.session.userEmail = user.email;
-        res.redirect('/dashboard'); // Redirect ke dashboard user
+        res.redirect('/dashboard'); 
 
     } catch (error) {
         res.render('pages/public/login', { error: 'Server error saat login.' });
     }
 };
 
-// Logika logout user
 export const postLogout = (req, res) => {
      req.session.destroy(err => {
         if (err) { 
-            // Jika gagal destroy, setidaknya redirect
             return res.redirect('/dashboard'); 
         }
-        res.clearCookie('connect.sid'); // Hapus cookie session di browser
-        res.redirect('/'); // Arahkan ke Landing Page (halaman utama)
+        res.clearCookie('connect.sid');
+        res.redirect('/');
     });
 };
 
 export const postUpdateProfile = async (req, res) => {
     const { name, email, phone } = req.body;
-    const userId = req.session.userId; // Ambil ID dari session yang sedang login
-
-    // Cek jika email diganti, apakah email baru sudah dipakai orang lain
+    const userId = req.session.userId; 
     try {
-        if (email !== req.session.userEmail) { // Cek jika emailnya diganti
+        if (email !== req.session.userEmail) {
              const emailExists = await prisma.user.findUnique({
                 where: { email: email }
             });
             if (emailExists) {
-                 // Gagal, email sudah dipakai. Kirim pesan error kembali ke dashboard.
                 return res.redirect('/dashboard?tab=profil&error=Email tersebut sudah terdaftar');
             }
         }
-
-        // Lolos validasi, update data user
         const updatedUser = await prisma.user.update({
             where: { id: userId },
             data: {
@@ -226,11 +193,7 @@ export const postUpdateProfile = async (req, res) => {
                 phone: phone
             }
         });
-
-        // Update juga data di session
         req.session.userEmail = updatedUser.email; 
-
-        // Sukses, kirim pesan sukses kembali ke dashboard
         res.redirect('/dashboard?tab=profil&success=Profil berhasil diperbarui');
 
     } catch (e) {
@@ -245,31 +208,25 @@ export const postChangePassword = async (req, res) => {
     const userId = req.session.userId;
 
     try {
-        // 1. Cek apakah password baru cocok dengan konfirmasi
         if (password_baru !== konfirmasi_password) {
             return res.redirect('/dashboard?tab=password&error=Password baru dan konfirmasi tidak cocok');
         }
 
-        // 2. Ambil data user (termasuk hash password lama) dari DB
         const user = await prisma.user.findUnique({ where: { id: userId } });
         if (!user) {
-             return res.redirect('/login'); // Session aneh, paksa login ulang
+             return res.redirect('/login'); 
         }
 
-        // 3. Validasi password lama
         const validPassLama = await bcrypt.compare(password_lama, user.password);
         if (!validPassLama) {
             return res.redirect('/dashboard?tab=password&error=Password lama Anda salah');
         }
 
-        // 4. Hash password baru dan simpan ke DB
         const hashedPasswordBaru = await bcrypt.hash(password_baru, 10);
         await prisma.user.update({
             where: { id: userId },
             data: { password: hashedPasswordBaru }
         });
-
-        // 5. Sukses
         res.redirect('/dashboard?tab=password&success=Password berhasil diubah');
 
     } catch (e) {
@@ -280,52 +237,40 @@ export const postChangePassword = async (req, res) => {
 
 export const getDocsPage = async (req, res) => {
     
-    const docsDir = path.join(__dirname, '../docs_src'); // Path ke folder .md kita
+    const docsDir = path.join(__dirname, '../docs_src');
 
     try {
-        // 1. Baca semua file .md, urutkan
         const files = fs.readdirSync(docsDir)
             .filter(file => file.endsWith('.md'))
             .sort();
 
         if (files.length === 0) {
-             // Jika tidak ada file .md sama sekali
              return res.render('pages/public/docs', { 
                  docMenu: [], 
                  activeDocHtml: '<p>Tidak ada dokumentasi ditemukan.</p>', 
                  activeSlug: '' 
              });
         }
-
-        // 2. Buat "Menu" dari nama file
-        // Kita ubah '1_rukun-islam.md' menjadi objek { nama: 'Rukun Islam', slug: 'rukun-islam' }
         const docMenu = files.map(file => {
-            const slug = file.replace(/^\d+_/, '').replace(/\.md$/, ''); // Hapus '1_' dan '.md'
-            const nama = slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()); // Ubah 'rukun-islam' -> 'Rukun Islam'
+            const slug = file.replace(/^\d+_/, '').replace(/\.md$/, ''); 
+            const nama = slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()); 
             return { nama, slug };
         });
-
-        // 3. Tentukan dokumen mana yang harus ditampilkan
-        // Ambil dari query param (?doc=...) ATAU tampilkan dokumen pertama jika tidak ada query
-        const activeSlug = req.query.doc || docMenu[0].slug; // Default ke item menu pertama
-        
-        // Cari nama file .md yang sesuai dengan slug yang aktif
+        const activeSlug = req.query.doc || docMenu[0].slug;
         const activeFileName = files.find(file => file.includes(activeSlug));
 
         let activeDocHtml = `<p class="text-red-500">Dokumen untuk '${activeSlug}' tidak ditemukan.</p>`;
 
-        // 4. Jika file ditemukan, baca dan parse ke HTML
         if (activeFileName) {
             const filePath = path.join(docsDir, activeFileName);
             const markdownContent = fs.readFileSync(filePath, 'utf-8');
-            activeDocHtml = marked.parse(markdownContent); // Ubah MD ke HTML
+            activeDocHtml = marked.parse(markdownContent);
         }
 
-        // 5. Render view, kirimkan SEMUA data yang dibutuhkan
         res.render('pages/public/docs', {
-             docMenu: docMenu,          // Daftar menu (untuk sidebar/dropdown)
-             activeDocHtml: activeDocHtml,  // Konten HTML yang aktif
-             activeSlug: activeSlug       // Slug yang aktif (untuk menandai menu)
+             docMenu: docMenu,
+             activeDocHtml: activeDocHtml,  
+             activeSlug: activeSlug  
         });
 
     } catch (error) {
@@ -337,39 +282,116 @@ export const getDocsPage = async (req, res) => {
         });
     }
 };
+function getServerIp() {
+    const interfaces = os.networkInterfaces();
+    for (const name of Object.keys(interfaces)) {
+        for (const iface of interfaces[name]) {
+            if (iface.family === 'IPv4' && !iface.internal) {
+                return iface.address;
+            }
+        }
+    }
+    return '127.0.0.1'; 
+}
+function formatBytes(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+function formatUptime(seconds) {
+    const d = Math.floor(seconds / (3600*24));
+    const h = Math.floor(seconds % (3600*24) / 3600);
+    const m = Math.floor(seconds % 3600 / 60);
+    const s = Math.floor(seconds % 60);
+    return `${d}d ${h}h ${m}m ${s}s`;
+}
 export const getLandingPage = async (req, res) => {
-    // Jika user sudah login, lempar langsung ke dashboard mereka
     if (req.session && req.session.userId) {
         return res.redirect('/dashboard');
     }
 
+    const defaultStats = {
+        db_stats: {
+            total_users: 0,
+            total_requests: 0,
+            requests_today: 0,
+            banned_ips: 0,
+            roles: { FREE: 100, PREMIUM: 50000 }
+        },
+        server_stats: null 
+    };
+
     try {
-        // 1. Ambil IP visitor saat ini
         const visitorIp = requestIp.getClientIp(req) || 'IP Tidak Dikenali';
 
-        // 2. Ambil statistik (jalankan query secara paralel agar cepat)
-        const [totalUsers, totalRequests] = await Promise.all([
-            prisma.user.count(),          // Menghitung jumlah baris di tabel User
-            prisma.requestLog.count()     // Menghitung jumlah baris di tabel RequestLog
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const [
+            totalUsers, 
+            totalRequests, 
+            requestsToday, 
+            bannedIPs, 
+            userRoles 
+        ] = await prisma.$transaction([
+            prisma.user.count(),
+            prisma.requestLog.count(),
+            prisma.requestLog.count({ where: { requestedAt: { gte: today } } }),
+            prisma.bannedIP.count(),
+            prisma.user.groupBy({
+                by: ['role'],
+                _count: { role: true },
+            })
         ]);
 
-        // 3. Render landing page dan kirimkan semua datanya
-        res.render('pages/public/landing', {
-            stats: {
-                users: totalUsers,
-                requests: totalRequests
+        const rolesCount = {
+            FREE: userRoles.find(r => r.role === 'FREE')?._count.role || 0,
+            PREMIUM: userRoles.find(r => r.role === 'PREMIUM')?._count.role || 0,
+        };
+        
+        const totalMem = os.totalmem();
+        const freeMem = os.freemem();
+        const usedMem = totalMem - freeMem;
+        const memUsagePercent = (usedMem / totalMem) * 100;
+        const cpus = os.cpus();
+
+        const serverStats = {
+            os_platform: os.platform(),
+            os_type: os.type(),
+            cpu_model: cpus[0].model,
+            cpu_cores: cpus.length,
+            node_version: process.version,
+            app_uptime: formatUptime(process.uptime()),
+            ram_total: formatBytes(totalMem),
+            ram_used: formatBytes(usedMem),
+            ram_free: formatBytes(freeMem),
+            ram_usage_percent: memUsagePercent.toFixed(2),
+            server_ip: getServerIp(),
+            hostname: os.hostname()
+        };
+
+        const dashboardData = {
+            db_stats: {
+                total_users: totalUsers,
+                total_requests: totalRequests,
+                requests_today: requestsToday,
+                banned_ips: bannedIPs,
+                roles: rolesCount
             },
+            server_stats: serverStats
+        };
+
+        res.render('pages/public/landing', {
+            stats: dashboardData,
             visitorIp: visitorIp
         });
 
     } catch (error) {
         console.error("Gagal memuat landing page stats:", error);
-        // Jika gagal ambil data DB, setidaknya render halaman dengan data default
         res.render('pages/public/landing', {
-            stats: {
-                users: 0,
-                requests: 0
-            },
+            stats: defaultStats, 
             visitorIp: 'N/A'
         });
     }

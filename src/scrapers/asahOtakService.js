@@ -1,4 +1,3 @@
-// Data ini dikonversi dari array PHP Anda
 const apiInfo = {
     api_name: 'API Asah Otak',
     version: '1.0',
@@ -6,10 +5,7 @@ const apiInfo = {
     description: 'Kumpulan soal dan jawaban untuk permainan asah otak.'
 };
 
-// Ini adalah data soal Anda (sudah dikonversi ke format JSON/JS)
 const dataSoal = [
-    // Kita buang index 0 (header Pertanyaan/Jawaban)
- 
     {
         "index": 1,
         "soal": "Hewan sejenis kadal yang dapat merubah warna kulitnya?",
@@ -1147,18 +1143,13 @@ const dataSoal = [
     }
 ];
 
-// Fungsi ini akan mengambil semua data
 export const getAllAsahOtak = async () => {
-    // Di masa depan, Anda bisa tambahkan logika di sini (misal: ambil dari DB, dll)
-    // Untuk saat ini, kita kembalikan data statis.
     return Promise.resolve(dataSoal);
 };
 
-// Fungsi ini mengambil SATU soal acak
 export const getRandomAsahOtak = async () => {
     const randomIndex = Math.floor(Math.random() * dataSoal.length);
     return Promise.resolve(dataSoal[randomIndex]);
 };
 
-// Ekspor info API-nya juga
 export const asahOtakApiInfo = apiInfo;

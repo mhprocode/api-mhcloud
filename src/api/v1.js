@@ -4,7 +4,6 @@ import { getRukunData, getAllSoalAsahOtak, getRandomSoalAsahOtak } from '../cont
 
 const router = express.Router();
 
-// Terapkan middleware authApiKey ke rute ini.
 router.get('/rukun-islam', authApiKey, getRukunData);
 router.get('/asah-otak/all', authApiKey, getAllSoalAsahOtak);
 router.get('/asah-otak/random', authApiKey, getRandomSoalAsahOtak);

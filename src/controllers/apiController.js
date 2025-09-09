@@ -9,7 +9,7 @@ export const getRukunData = async (req, res) => {
             api_info: {
                 api_name: "API Rukun Islam & Rukun Iman",
                 version: "1.0",
-                author: "mhcode" // Ganti nama Anda
+                author: "mhcode" 
             },
             data: data
         };

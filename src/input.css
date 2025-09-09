@@ -1,1 +1,8 @@
 @import "tailwindcss";
+.prose pre {
+    overflow-x: auto;  
+    max-width: 100%; 
+}
+.prose code {
+    word-break: break-all;
+}
