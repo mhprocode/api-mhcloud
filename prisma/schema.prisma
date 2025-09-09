@@ -1,0 +1,77 @@
+// File: prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Model untuk login Super Admin (Web Admin) - TIDAK BERUBAH
+model Admin {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
+
+// BARU: Role untuk User
+enum Role {
+  FREE
+  PREMIUM
+}
+
+// BARU: Model untuk USER (Customer API Anda)
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String?
+  email     String   @unique
+  phone     String?
+  password  String   // Hash bcrypt
+  role      Role     @default(FREE) // Default role saat register
+  isBanned  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  apiKey    ApiKey?  // Relasi: Satu User punya satu ApiKey
+}
+
+// MODIFIKASI BESAR: ApiKey sekarang terhubung ke User
+model ApiKey {
+  id           Int          @id @default(autoincrement())
+  key          String       @unique
+  createdAt    DateTime     @default(now())
+  
+  // Relasi ke User (WAJIB)
+  userId       Int          @unique // Satu key hanya milik satu user
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Kebijakan Limit & Expired
+  monthlyLimit Int          // Misal: 1000 (Free) atau 50000 (Premium)
+  hitCount     Int          @default(0)
+  lastReset    DateTime     @default(now()) // Kapan hitCount terakhir di-reset (penting untuk limit bulanan)
+  expiresAt    DateTime?    // Null untuk FREE, tanggal spesifik untuk PREMIUM (kapan langganan berakhir)
+
+  RequestLogs  RequestLog[]
+  
+  // Hapus field 'owner' (String) yang lama, kita ganti dengan relasi User
+}
+
+// Model Histori (TIDAK BERUBAH)
+model RequestLog {
+  id          Int      @id @default(autoincrement())
+  apiKeyId    Int
+  apiKey      ApiKey   @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
+  endpoint    String
+  statusCode  Int
+  ipAddress   String?  // <-- TAMBAHKAN BARIS INI
+  requestedAt DateTime @default(now())
+}
+
+model BannedIP {
+  id        Int      @id @default(autoincrement())
+  ipAddress String   @unique // IP yang diblokir
+  reason    String?  // Alasan pemblokiran (opsional)
+  createdAt DateTime @default(now())
+}
+

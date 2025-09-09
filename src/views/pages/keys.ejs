@@ -1,0 +1,45 @@
+<%- include('../partials/header') %>
+<%- include('../partials/navbar') %>
+
+<main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+  <h1 class="text-2xl font-bold mb-4">Manajemen API Keys</h1>
+
+  <div class="bg-white p-4 shadow rounded-lg mb-6">
+    <form action="/admin/keys/create" method="POST" class="flex items-end space-x-4">
+      <div class="flex-grow">
+        <label for="owner" class="block text-sm font-medium text-gray-700">Nama Pemilik / Aplikasi</label>
+        <input type="text" name="owner" id="owner" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+      </div>
+      <button type="submit" class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700">Buat Key Baru</button>
+    </form>
+  </div>
+
+  <div class="bg-white shadow rounded-lg overflow-hidden">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Pemilik</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">API Key</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Hits</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <% keys.forEach(key => { %>
+          <tr>
+            <td class="px-6 py-4 text-sm font-medium text-gray-900"><%= key.owner %></td>
+            <td class="px-6 py-4 text-sm text-gray-500 font-mono"><%= key.key %></td>
+            <td class="px-6 py-4 text-sm text-gray-500"><%= key.hitCount %></td>
+            <td class="px-6 py-4 text-sm">
+              <form action="/admin/keys/delete/<%= key.id %>" method="POST">
+                <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Yakin hapus key ini?')">Hapus</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<%- include('../partials/footer') %>

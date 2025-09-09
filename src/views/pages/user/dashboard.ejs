@@ -1,0 +1,183 @@
+<%- include('../../partials/header') %>
+
+<nav class="bg-white shadow-sm sticky top-0 z-50">
+  <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+    <div class="font-bold text-xl text-gray-800">Area Pengguna</div>
+    <div class="space-x-4 flex items-center">
+      <% if (locals.user && user.email) { %>
+          <span class="text-sm text-gray-600 hidden md:block">Halo, <%= user.name || user.email %></span>
+      <% } %>
+      <a href="/docs" class="text-gray-600 hover:text-indigo-600 font-medium">Dokumentasi</a>
+      <a href="/logout" class="text-gray-600 hover:text-indigo-600 font-medium">Logout</a>
+    </div>
+  </div>
+</nav>
+
+<% 
+  // Ambil query param 'tab' dari URL. Jika tidak ada, default ke 'apikey'
+  // Kita perlu cara untuk mengirim data ini ke JS di client, atau mengaturnya di server.
+  // Cara termudah adalah mengatur kelas 'hidden' langsung dari EJS.
+
+  // Ambil query dari controller (jika dikirim) atau dari URL (jika ada)
+  // Cara termudah: Controller harus mengirimkan query param ke view.
+  // Mari kita asumsikan controller BELUM mengirimkannya, kita ambil dari 'locals' (Express otomatis menyediakannya)
+  const activeTab = locals.query.tab || 'apikey'; 
+  
+  // Ambil pesan error/sukses dari query param (untuk notifikasi)
+  const errorMsg = locals.query.error || null;
+  const successMsg = locals.query.success || null;
+%>
+
+<main class="container mx-auto mt-10 px-6 py-8">
+  <div class="md:flex md:space-x-8">
+
+    <aside class="md:w-1/4 mb-8 md:mb-0">
+      <div class="bg-white p-4 rounded-lg shadow-lg sticky top-24">
+        <nav class="flex flex-col space-y-2">
+          <a href="/dashboard?tab=apikey" 
+             class="px-4 py-3 rounded-md text-gray-700 font-medium hover:bg-indigo-50 hover:text-indigo-600
+             <%= activeTab === 'apikey' ? 'bg-indigo-100 text-indigo-700' : '' %>">
+             API Key & Penggunaan
+          </a>
+          <a href="/dashboard?tab=profil" 
+             class="px-4 py-3 rounded-md text-gray-700 font-medium hover:bg-indigo-50 hover:text-indigo-600
+             <%= activeTab === 'profil' ? 'bg-indigo-100 text-indigo-700' : '' %>">
+             Profil Saya
+          </a>
+           <a href="/dashboard?tab=password" 
+             class="px-4 py-3 rounded-md text-gray-700 font-medium hover:bg-indigo-50 hover:text-indigo-600
+             <%= activeTab === 'password' ? 'bg-indigo-100 text-indigo-700' : '' %>">
+             Ganti Password
+          </a>
+        </nav>
+      </div>
+    </aside>
+
+    <section class="md:w-3/4">
+
+      <% if (errorMsg) { %>
+        <div class="mb-6 bg-red-100 border border-red-400 text-red-700 px-5 py-4 rounded-lg relative" role="alert">
+            <strong class="font-bold">Error: </strong>
+            <span class="block sm:inline"><%= errorMsg %></span>
+        </div>
+      <% } %>
+      <% if (successMsg) { %>
+         <div class="mb-6 bg-green-100 border border-green-400 text-green-700 px-5 py-4 rounded-lg relative" role="alert">
+            <strong class="font-bold">Sukses: </strong>
+            <span class="block sm:inline"><%= successMsg %></span>
+        </div>
+      <% } %>
+
+      <div id="tab-apikey" class="bg-white shadow-lg rounded-lg <%= activeTab === 'apikey' ? '' : 'hidden' %>">
+        <% if (locals.key && locals.user) { %>
+          <div class="p-8 divide-y divide-gray-200">
+            <div class="pb-6">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Informasi API Key</h2>
+                <p class="text-sm text-gray-600">Paket Anda:
+                    <span class="font-bold px-3 py-1 rounded-full text-sm 
+                        <%= user.role === 'PREMIUM' ? 'bg-yellow-100 text-yellow-800' : 'bg-indigo-100 text-indigo-800' %>
+                    ">
+                        <%= user.role %>
+                    </span>
+                </p>
+                <label for="apikey" class="block text-sm font-medium text-gray-700 mt-5">API Key Anda:</label>
+                <div class="mt-2 bg-gray-100 p-4 rounded-md font-mono text-gray-800 text-lg break-all shadow-inner">
+                    <%= key.key %>
+                </div>
+                <p class="text-xs text-gray-500 mt-2">Gunakan key ini sebagai query parameter <code>?apikey=</code>.</p>
+            </div>
+            <div class="pt-6">
+                <h3 class="text-lg font-semibold text-gray-800">Statistik Penggunaan (Bulanan)</h3>
+                <p class="text-sm text-gray-500">Hitungan akan di-reset setiap 30 hari.</p>
+                <div class="mt-4">
+                    <div class="flex justify-between text-sm font-medium text-gray-700 mb-1">
+                        <span>Digunakan: <%= key.hitCount.toLocaleString('id-ID') %></span>
+                        <span>Limit: <%= key.monthlyLimit.toLocaleString('id-ID') %></span>
+                    </div>
+                    <% const usagePercent = Math.min((key.hitCount / key.monthlyLimit) * 100, 100).toFixed(2); %>
+                    <div class="w-full bg-gray-200 rounded-full h-5 shadow-inner">
+                        <div class="bg-indigo-600 h-5 rounded-full flex items-center justify-center text-white text-xs font-bold"
+                             style="width: <%= usagePercent %>%;">
+                             <%= usagePercent %><%%
+                        </div>
+                    </div>
+                </div>
+                <% if (key.expiresAt) { %>
+                     <p class="text-sm text-yellow-700 mt-4 font-medium">
+                        Akun Premium Anda berakhir pada: <%= new Date(key.expiresAt).toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %>
+                     </p>
+                <% } else { %>
+                     <p class="text-sm text-gray-600 mt-4">
+                        Paket FREE Anda tidak memiliki tanggal kedaluwarsa.
+                        <a href="#" class="text-indigo-600 hover:underline font-medium">(Hubungi kami untuk Upgrade)</a>
+                     </p>
+                <% } %>
+            </div>
+          </div>
+        <% } else if (!locals.errorMsg) { %>
+             <p class="p-8 text-gray-600">Memuat data API Key Anda...</p>
+        <% } %>
+      </div>
+
+      <div id="tab-profil" class="bg-white shadow-lg rounded-lg p-8 <%= activeTab === 'profil' ? '' : 'hidden' %>">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-6">Profil Saya</h2>
+        <% if (locals.user) { %>
+            <form action="/dashboard/update-profile" method="POST" class="space-y-6 max-w-lg">
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700">Nama Lengkap</label>
+                    <input type="text" name="name" id="name" value="<%= user.name || '' %>" placeholder="Nama lengkap Anda"
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                </div>
+                 <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">Alamat Email</label>
+                    <input type="email" name="email" id="email" value="<%= user.email %>" required
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                     <p class="text-xs text-gray-500 mt-1">Mengganti email akan mengubah email login Anda.</p>
+                </div>
+                 <div>
+                    <label for="phone" class="block text-sm font-medium text-gray-700">Nomor Telepon</label>
+                    <input type="tel" name="phone" id="phone" value="<%= user.phone || '' %>" placeholder="0812xxxxxx"
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                </div>
+                <div class="pt-4">
+                    <button type="submit" class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700">
+                        Simpan Perubahan Profil
+                    </button>
+                </div>
+            </form>
+        <% } %>
+      </div>
+
+      <div id="tab-password" class="bg-white shadow-lg rounded-lg p-8 <%= activeTab === 'password' ? '' : 'hidden' %>">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-6">Ganti Password</h2>
+         <form action="/dashboard/change-password" method="POST" class="space-y-6 max-w-lg">
+            <div>
+                <label for="password_lama" class="block text-sm font-medium text-gray-700">Password Lama</label>
+                <input type="password" name="password_lama" id="password_lama" required
+                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+            </div>
+             <div>
+                <label for="password_baru" class="block text-sm font-medium text-gray-700">Password Baru</label>
+                <input type="password" name="password_baru" id="password_baru" required minlength="6"
+                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                 <p class="text-xs text-gray-500 mt-1">Minimal 6 karakter.</p>
+            </div>
+             <div>
+                <label for="konfirmasi_password" class="block text-sm font-medium text-gray-700">Konfirmasi Password Baru</label>
+                <input type="password" name="konfirmasi_password" id="konfirmasi_password" required
+                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+            </div>
+            <div class="pt-4">
+                <button type="submit" class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700">
+                    Ubah Password
+                </button>
+            </div>
+         </form>
+      </div>
+
+    </section>
+
+  </div>
+</main>
+
+<%- include('../../partials/footer') %>
