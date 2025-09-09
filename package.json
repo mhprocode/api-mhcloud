@@ -9,7 +9,8 @@
     "start": "node index.js",
     "server": "nodemon index.js",
     "css": "npx @tailwindcss/cli -i ./src/input.css -o ./src/public/css/style.css --watch",
-    "dev": "concurrently \"npm:server\" \"npm:css\""
+    "dev": "concurrently \"npm:server\" \"npm:css\"",
+    "build": "npx @tailwindcss/cli -i ./src/input.css -o ./src/public/css/style.css --minify"
   },
   "keywords": [],
   "author": "",
