@@ -1,10 +1,13 @@
-# Rukun Islam dan Rukun Iman.
 
-Mengembalikan data JSON terstruktur mengenai Rukun Islam dan Rukun Iman.
+# **Rukun Islam dan Rukun Iman.**
 
-```html
-GET /api/v1/rukun-islam
+Mengembalikan data JSON terstruktur
+mengenai Rukun Islam dan Rukun Iman.
+
+**GET /api/v1/rukun-islam**
+```json
 Contoh Response (Sukses 200):
+
 {
     "api_info": {
         "api_name": "API Rukun Islam & Rukun Iman",

@@ -7,6 +7,7 @@ import { marked } from 'marked';
 import { fileURLToPath } from 'url';
 import requestIp from 'request-ip';
 import os from 'os';
+import hljs from 'highlight.js'; 
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -240,6 +241,17 @@ export const getDocsPage = async (req, res) => {
     const docsDir = path.join(__dirname, '../docs_src');
 
     try {
+        // --- TAMBAHAN BARU: KONFIGURASI MARKED ---
+        // Ini memberitahu marked: "Setiap kali kamu menemukan blok kode (```),
+        // jalankan fungsi 'highlight' ini untuk mewarnainya."
+        marked.setOptions({
+            highlight: function(code, lang) {
+              const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+              return hljs.highlight(code, { language }).value;
+            }
+        });
+        // --- AKHIR TAMBAHAN BARU ---
+
         const files = fs.readdirSync(docsDir)
             .filter(file => file.endsWith('.md'))
             .sort();
@@ -251,14 +263,15 @@ export const getDocsPage = async (req, res) => {
                  activeSlug: '' 
              });
         }
+
         const docMenu = files.map(file => {
-            const slug = file.replace(/^\d+_/, '').replace(/\.md$/, ''); 
-            const nama = slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()); 
+            const slug = file.replace(/^\d+_/, '').replace(/\.md$/, '');
+            const nama = slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
             return { nama, slug };
         });
+
         const activeSlug = req.query.doc || docMenu[0].slug;
         const activeFileName = files.find(file => file.includes(activeSlug));
-
         let activeDocHtml = `<p class="text-red-500">Dokumen untuk '${activeSlug}' tidak ditemukan.</p>`;
 
         if (activeFileName) {
@@ -269,8 +282,8 @@ export const getDocsPage = async (req, res) => {
 
         res.render('pages/public/docs', {
              docMenu: docMenu,
-             activeDocHtml: activeDocHtml,  
-             activeSlug: activeSlug  
+             activeDocHtml: activeDocHtml,
+             activeSlug: activeSlug
         });
 
     } catch (error) {
@@ -282,6 +295,8 @@ export const getDocsPage = async (req, res) => {
         });
     }
 };
+
+
 function getServerIp() {
     const interfaces = os.networkInterfaces();
     for (const name of Object.keys(interfaces)) {

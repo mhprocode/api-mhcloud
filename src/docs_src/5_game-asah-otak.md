@@ -1,12 +1,15 @@
-## API Asah Otak
+## **game Asah Otak**
 
-Menyediakan kumpulan data soal dan jawaban untuk permainan asah otak. API ini menyediakan dua endpoint: satu untuk mengambil semua data, dan satu lagi untuk mengambil satu soal secara acak.
+Menyediakan kumpulan data soal dan jawaban untuk permainan asah otak.
+ API ini menyediakan dua endpoint: satu untuk mengambil semua data, 
+ dan satu lagi untuk mengambil satu soal secara acak.
 
 ### Ambil Soal Acak (Random)
-Endpoint ini adalah yang paling umum digunakan. Ia akan mengembalikan satu objek JSON berisi soal dan jawaban yang dipilih secara acak.
+Endpoint ini adalah yang paling umum digunakan. Ia akan mengembalikan satu objek JSON berisi soal 
+dan jawaban yang dipilih secara acak.
 
+**GET /api/v1/asah-otak/random**
 ```html
-GET /api/v1/asah-otak/random
 Contoh Response (Sukses 200):
 JSON
 
