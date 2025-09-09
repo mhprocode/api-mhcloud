@@ -27,6 +27,76 @@ Proyek ini dibangun dari awal untuk menjadi terstruktur dan mudah dikembangkan.
 - Autentikasi: express-session, connect-sqlite3, bcrypt.js
 - Scraping: (Dipersiapkan untuk axios & cheerio)
 - Lain-lain: request-ip (IP Logging), marked (Dynamic Markdown Docs)
+
+# stuktur file
+```bash
+├── db.js
+├── index.js
+├── package.json
+├── package-lock.json
+├── prisma
+│   ├── dev.db
+│   ├── migrations
+│   │   ├── 20250909065855_init
+│   │   │   └── migration.sql
+│   │   ├── 20250909073548_add_users_roles_limits
+│   │   │   └── migration.sql
+│   │   ├── 20250909074852_add_user_ban_status
+│   │   │   └── migration.sql
+│   │   ├── 20250909080737_add_user_name_phone
+│   │   │   └── migration.sql
+│   │   └── migration_lock.toml
+│   └── schema.prisma
+├── README.MD
+├── registerAdmin.js
+├── src
+│   ├── api
+│   │   ├── admin.js
+│   │   ├── publicRoutes.js
+│   │   └── v1.js
+│   ├── controllers
+│   │   ├── adminController.js
+│   │   ├── apiController.js
+│   │   └── userController.js
+│   ├── docs_src
+│   │   ├── 1_rukun-islam.md
+│   │   └── 2_asah-otak.md
+│   ├── input.css
+│   ├── middleware
+│   │   ├── authAdmin.js
+│   │   ├── authApiKey.js
+│   │   └── authUser.js
+│   ├── output.css
+│   ├── public
+│   │   └── css
+│   │       └── style.css
+│   ├── scrapers
+│   │   ├── asahOtakService.js
+│   │   └── rukunIslamScraper.js
+│   └── views
+│       ├── pages
+│       │   ├── dashboard.ejs
+│       │   ├── edit-user.ejs
+│       │   ├── history.ejs
+│       │   ├── ip-bans.ejs
+│       │   ├── keys.ejs
+│       │   ├── login.ejs
+│       │   ├── public
+│       │   │   ├── docs.ejs
+│       │   │   ├── landing.ejs
+│       │   │   ├── login.ejs
+│       │   │   └── register.ejs
+│       │   ├── user
+│       │   │   └── dashboard.ejs
+│       │   └── users.ejs
+│       └── partials
+│           ├── footer.ejs
+│           ├── header.ejs
+│           └── navbar.ejs
+└── tailwind.config.js
+```
+
+
 # Instalasi & Menjalankan Proyek
 Panduan ini untuk menjalankan server secara lokal (development).
 ### 1. Clone repositori ini
