@@ -3,16 +3,17 @@ import { getAllAsahOtak, getRandomAsahOtak, asahOtakApiInfo, } from '../scrapers
 import { scrapeJadwalSholat } from '../scrapers/jadwalSholatScraper.js';
 import { scrapeDaftarKota } from '../scrapers/daftarKotaScraper.js';
 import { getSemuaSurah, getDetailSurah, getDetailAyat } from '../scrapers/quranService.js';
+import { getYoutubeInfo } from '../scrapers/ytdlService.js';
 
 export const getRukunData = async (req, res) => {
     try {
-        const data = await getRukunDataStatic(); 
+        const data = await getRukunDataStatic();
 
         const responseFormat = {
             api_info: {
                 api_name: "API Rukun Islam & Rukun Iman",
                 version: "1.0",
-                author: "mhcode" 
+                author: "mhcode"
             },
             data: data
         };
@@ -26,7 +27,7 @@ export const getAllSoalAsahOtak = async (req, res) => {
     try {
         const data = await getAllAsahOtak();
         res.status(200).json({
-            api_info: asahOtakApiInfo, 
+            api_info: asahOtakApiInfo,
             data: data
         });
     } catch (error) {
@@ -34,11 +35,11 @@ export const getAllSoalAsahOtak = async (req, res) => {
     }
 };
 export const getRandomSoalAsahOtak = async (req, res) => {
-     try {
+    try {
         const data = await getRandomAsahOtak();
         res.status(200).json({
             api_info: asahOtakApiInfo,
-            data: data 
+            data: data
         });
     } catch (error) {
         res.status(500).json({ status: 500, message: 'Gagal memproses data.', error: error.message });
@@ -48,14 +49,14 @@ export const getJadwalSholat = async (req, res) => {
     const { kota, tahun, bulan } = req.query;
 
     if (!kota) {
-        return res.status(400).json({ 
+        return res.status(400).json({
             status: 400,
-            message: 'Parameter "kota" (ID Kota) wajib diisi. Contoh: ?kota=207' 
+            message: 'Parameter "kota" (ID Kota) wajib diisi. Contoh: ?kota=207'
         });
     }
 
     const currentYear = tahun || new Date().getFullYear();
-    const currentMonth = bulan || (new Date().getMonth() + 1); 
+    const currentMonth = bulan || (new Date().getMonth() + 1);
 
     try {
         const data = await scrapeJadwalSholat(kota, currentYear, currentMonth);
@@ -86,7 +87,7 @@ export const getDaftarKota = async (req, res) => {
 
         const responseFormat = {
             api_info: {
-                api_name: 'API Scraper Daftar Kota (ID Jadwal Sholat)',
+                api_name: 'API MhCloud Daftar Kota (ID Jadwal Sholat)',
                 version: '1.0',
                 author: 'mhcode',
                 source: 'jadwalsholat.org'
@@ -130,5 +131,72 @@ export const getAyatSpesifik = async (req, res) => {
         res.status(200).json({ status: 200, message: "Sukses", data: data });
     } catch (error) {
         res.status(404).json({ status: 404, message: error.message });
+    }
+};
+
+export const getYoutubeVideo = async (req, res) => {
+    const { url } = req.query;
+    if (!url || !/^(https|http):\/\/(www\.)?(youtube\.com|youtu\.be)\//.test(url)) {
+        return res.status(400).json({ status: 400, message: 'Parameter "url" wajib diisi dan harus URL YouTube yang valid.' });
+    }
+
+    try {
+        const fullData = await getYoutubeInfo(url);
+
+        // --- INI PERUBAHANNYA ---
+        // Kita hanya akan mengambil 'videoWithAudio' dari hasil service.
+        // Array ini berisi semua format yang sudah memiliki video DAN audio tergabung.
+        const videoData = {
+            title: fullData.title,
+            thumbnail: fullData.thumbnail,
+            duration: fullData.duration,
+            channel: fullData.channel,
+            formats: fullData.videoWithAudio.sort((a,b) => b.resolution.localeCompare(a.resolution, undefined, {numeric: true})) // Urutkan dari resolusi tertinggi
+        };
+        // --- AKHIR PERUBAHAN ---
+
+        res.status(200).json({
+            api_info: { 
+                api_name: 'API YouTube MP4 Downloader (Video + Audio)',
+                version: '1.1', // Naikkan versi karena ada perubahan
+                author: 'mhcode'
+            },
+            data: videoData
+        });
+
+    } catch (error) {
+        res.status(500).json({ status: 500, message: 'Gagal memproses permintaan Anda.', error: error.message });
+    }
+};
+
+
+export const getYoutubeAudio = async (req, res) => {
+    const { url } = req.query;
+    if (!url || !/^(https|http):\/\/(www\.)?(youtube\.com|youtu\.be)\//.test(url)) {
+        return res.status(400).json({ status: 400, message: 'Parameter "url" wajib diisi dan harus URL YouTube yang valid.' });
+    }
+
+    try {
+        const fullData = await getYoutubeInfo(url);
+
+        const audioData = {
+            title: fullData.title,
+            thumbnail: fullData.thumbnail,
+            duration: fullData.duration,
+            channel: fullData.channel,
+            formats: fullData.audioOnly
+        };
+
+        res.status(200).json({
+            api_info: {
+                api_name: 'API MhCloud ytdl ',
+                version: '1.0',
+                author: 'mhcode'
+            },
+            data: audioData
+        });
+
+    } catch (error) {
+        res.status(500).json({ status: 500, message: 'Gagal memproses permintaan Anda.', error: error.message });
     }
 };

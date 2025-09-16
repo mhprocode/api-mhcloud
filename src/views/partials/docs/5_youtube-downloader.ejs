@@ -1,0 +1,120 @@
+<div>
+    <h1 class="text-4xl font-extrabold text-gray-900 tracking-tight">API YouTube Downloader</h1>
+    <p class="mt-4 text-lg text-gray-600">
+        Menyediakan endpoint terpisah untuk mengambil link download video (MP4) dan audio (MP3/M4A) dari YouTube. API ini tidak men-download file ke server, melainkan memberikan link langsung dari server YouTube.
+    </p>
+
+    <hr class="my-10">
+
+    <div>
+        <h2 class="text-2xl font-bold text-gray-800">Ambil Link Video (MP4)</h2>
+        <p class="mt-2 text-gray-500">Mengembalikan informasi video dan daftar link download untuk berbagai format video yang sudah memiliki audio.</p>
+        
+        <div class="mt-4 bg-gray-900 rounded-lg p-4 font-mono text-sm text-white flex items-center justify-between">
+            <div>
+                <span class="font-bold text-green-400">GET</span>
+                <span class="text-gray-400 ml-3">/api/v1/ytmp4</span>
+            </div>
+        </div>
+        
+        <h3 class="mt-6 text-lg font-bold text-gray-800">Parameter (Query)</h3>
+        <ul class="mt-2 list-disc list-inside space-y-3 text-gray-600">
+            <li>
+                <code class="font-semibold text-gray-800 bg-gray-100 p-1 rounded">url</code> (Wajib): URL lengkap dari video YouTube.
+            </li>
+        </ul>
+
+        <h4 class="mt-6 font-semibold text-gray-700">Contoh Penggunaan:</h4>
+        <div class="mt-2 text-xs text-gray-500 font-mono">
+           <p><code>/api/v1/ytmp4?url=https://www.youtube.com/watch?v=dQw4w9WgXcQ</code></p>
+        </div>
+
+        <h4 class="mt-6 font-semibold text-gray-700">Contoh Response (Sukses 200):</h4>
+        <div class="mt-2 bg-gray-900 text-white p-4 rounded-md text-sm overflow-x-auto">
+            <pre><code>{
+    "api_info": {
+        "api_name": "API YouTube MP4 Downloader (Video + Audio)",
+        "version": "1.1",
+        "author": "mhcode"
+    },
+    "data": {
+        "title": "Judul Video Anda",
+        "thumbnail": "https://...",
+        "duration": "...",
+        "channel": "...",
+        "formats": [
+            {
+                "format_id": "22",
+                "ext": "mp4",
+                "resolution": "1280x720",
+                "filesize": "35.95 MB",
+                "url": "https://..."
+            },
+            {
+                "format_id": "18",
+                "ext": "mp4",
+                "resolution": "640x360",
+                "filesize": "12.50 MB",
+                "url": "https://..."
+            }
+        ]
+    }
+}</code></pre>
+        </div>
+    </div>
+    
+    <hr class="my-10">
+
+    <div class="mt-12">
+        <h2 class="text-2xl font-bold text-gray-800">Ambil Link Audio (MP3/M4A)</h2>
+        <p class="mt-2 text-gray-500">Mengembalikan informasi video dan daftar link download HANYA untuk format audio.</p>
+        
+        <div class="mt-4 bg-gray-900 rounded-lg p-4 font-mono text-sm text-white flex items-center justify-between">
+            <div>
+                <span class="font-bold text-green-400">GET</span>
+                <span class="text-gray-400 ml-3">/api/v1/ytmp3</span>
+            </div>
+        </div>
+
+        <h3 class="mt-6 text-lg font-bold text-gray-800">Parameter (Query)</h3>
+        <ul class="mt-2 list-disc list-inside space-y-3 text-gray-600">
+            <li>
+                <code class="font-semibold text-gray-800 bg-gray-100 p-1 rounded">url</code> (Wajib): URL lengkap dari video YouTube.
+            </li>
+        </ul>
+
+         <h4 class="mt-6 font-semibold text-gray-700">Contoh Penggunaan:</h4>
+        <div class="mt-2 text-xs text-gray-500 font-mono">
+           <p><code>/api/v1/ytmp3?url=https://www.youtube.com/watch?v=dQw4w9WgXcQ</code></p>
+        </div>
+
+        <h4 class="mt-6 font-semibold text-gray-700">Contoh Response (Sukses 200):</h4>
+        <div class="mt-2 bg-gray-900 text-white p-4 rounded-md text-sm overflow-x-auto">
+            <pre><code>{
+    "api_info": { ... },
+    "data": {
+        "title": "Rick Astley - Never Gonna Give You Up",
+        "thumbnail": "https://...",
+        "duration": "3:33",
+        "channel": "Rick Astley",
+        "formats": [
+            {
+                "format_id": "251",
+                "ext": "webm",
+                "acodec": "opus",
+                "filesize": "3.26 MB",
+                "url": "https://..."
+            },
+            {
+                "format_id": "140",
+                "ext": "m4a",
+                "acodec": "mp4a.40.2",
+                "filesize": "3.26 MB",
+                "url": "https://..."
+            }
+        ]
+    }
+}</code></pre>
+        </div>
+    </div>
+</div>

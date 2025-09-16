@@ -1,0 +1,61 @@
+<div>
+    <h1 class="text-4xl font-extrabold text-gray-900 tracking-tight">API Asah Otak</h1>
+    <p class="mt-4 text-lg text-gray-600">
+        Menyediakan kumpulan data soal dan jawaban untuk permainan asah otak. API ini memiliki dua endpoint: satu untuk mengambil semua data, dan satu lagi untuk mengambil satu soal secara acak.
+    </p>
+
+    <hr class="my-10">
+
+    <div>
+        <h2 class="text-2xl font-bold text-gray-800">Ambil Soal Acak (Random)</h2>
+        <p class="mt-2 text-gray-500">Endpoint ini adalah yang paling umum digunakan. Ia akan mengembalikan satu objek JSON berisi soal dan jawaban yang dipilih secara acak.</p>
+        
+        <div class="mt-4 bg-gray-900 rounded-lg p-4 font-mono text-sm text-white flex items-center justify-between">
+            <div>
+                <span class="font-bold text-green-400">GET</span>
+                <span class="text-gray-400 ml-3">/api/v1/asah-otak/random</span>
+            </div>
+        </div>
+        
+        <h4 class="mt-6 font-semibold text-gray-700">Contoh Response (Sukses 200):</h4>
+        <div class="mt-2 bg-gray-900 text-white p-4 rounded-md text-sm overflow-x-auto">
+            <pre><code>{
+    "api_info": {
+        "api_name": "API Asah Otak",
+        "version": "1.0",
+        "author": "mhcode",
+        "description": "Kumpulan soal dan jawaban untuk permainan asah otak."
+    },
+    "data": {
+        "index": 42,
+        "soal": "Makhluk halus mitos Jawa, berwujud manusia mirip kera, bertubuh besar dan berbulu?",
+        "jawaban": "Genderuwo"
+    }
+}</code></pre>
+        </div>
+    </div>
+
+    <div class="mt-12">
+        <h2 class="text-2xl font-bold text-gray-800">Ambil Semua Soal (All)</h2>
+        <p class="mt-2 text-gray-500">Endpoint ini mengembalikan seluruh database soal dalam satu array. (Peringatan: data yang dikembalikan cukup besar).</p>
+        
+        <div class="mt-4 bg-gray-900 rounded-lg p-4 font-mono text-sm text-white flex items-center justify-between">
+            <div>
+                <span class="font-bold text-green-400">GET</span>
+                <span class="text-gray-400 ml-3">/api/v1/asah-otak/all</span>
+            </div>
+        </div>
+
+        <h4 class="mt-6 font-semibold text-gray-700">Contoh Response (Sukses 200):</h4>
+        <div class="mt-2 bg-gray-900 text-white p-4 rounded-md text-sm overflow-x-auto">
+            <pre><code>{
+    "api_info": { ... },
+    "data": [
+        { "index": 1, "soal": "...", "jawaban": "..." },
+        { "index": 2, "soal": "...", "jawaban": "..." },
+        // ... (dan seterusnya)
+    ]
+}</code></pre>
+        </div>
+    </div>
+</div>

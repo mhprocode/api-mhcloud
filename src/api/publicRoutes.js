@@ -6,7 +6,8 @@ const router = express.Router();
 
 
 router.get('/', UserController.getLandingPage);
-router.get('/docs', UserController.getDocsPage);
+router.get('/docs', UserController.getDocsIndexPage);
+router.get('/docs/:slug', UserController.getDocsDetailPage);
 
 router.get('/register', UserController.getRegisterPage);
 router.post('/register', UserController.postRegister);

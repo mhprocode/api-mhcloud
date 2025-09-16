@@ -1,0 +1,78 @@
+<div>
+    <h1 class="text-4xl font-extrabold text-gray-900 tracking-tight">API Jadwal Sholat</h1>
+    <p class="mt-4 text-lg text-gray-600">
+        Mengambil data jadwal sholat bulanan dari situs <code class="text-sm bg-gray-100 p-1 rounded">jadwalsholat.org</code>. API ini memerlukan parameter ID Kota untuk berfungsi.
+    </p>
+
+    <hr class="my-10">
+
+    <div>
+        <h2 class="text-2xl font-bold text-gray-800">Endpoint Utama</h2>
+        <p class="mt-2 text-gray-500">Gunakan endpoint ini untuk mendapatkan jadwal sholat bulanan untuk lokasi tertentu.</p>
+        
+        <div class="mt-4 bg-gray-900 rounded-lg p-4 font-mono text-sm text-white flex items-center justify-between">
+            <div>
+                <span class="font-bold text-green-400">GET</span>
+                <span class="text-gray-400 ml-3">/api/v1/jadwal-sholat</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-12">
+        <h3 class="text-xl font-bold text-gray-800">Parameter (Query)</h3>
+        <ul class="mt-4 list-disc list-inside space-y-3 text-gray-600">
+            <li>
+                <code class="font-semibold text-gray-800 bg-gray-100 p-1 rounded">kota</code> (Wajib): ID unik untuk setiap kota. Untuk menemukan ID, gunakan endpoint <a href="/docs/daftar-kota" class="text-indigo-600 hover:underline">Daftar Kota</a>.
+            </li>
+            <li>
+                <code class="font-semibold text-gray-800 bg-gray-100 p-1 rounded">tahun</code> (Opsional): Tahun yang diinginkan (contoh: <code class="text-sm">2025</code>). Default ke tahun saat ini.
+            </li>
+            <li>
+                <code class="font-semibold text-gray-800 bg-gray-100 p-1 rounded">bulan</code> (Opsional): Bulan yang diinginkan dalam format angka 1-12 (contoh: <code class="text-sm">12</code> untuk Desember). Default ke bulan saat ini.
+            </li>
+        </ul>
+
+        <h4 class="mt-6 font-semibold text-gray-700">Contoh Penggunaan:</h4>
+        <div class="mt-2 space-y-2 text-xs text-gray-500 font-mono">
+           <p><code>/api/v1/jadwal-sholat?kota=207</code> (Jadwal untuk Kab. Bogor bulan ini)</p>
+           <p><code>/api/v1/jadwal-sholat?kota=307&tahun=2025&bulan=12</code> (Jadwal untuk Yogyakarta bulan Desember 2025)</p>
+        </div>
+    </div>
+
+    <div class="mt-12">
+        <h4 class="text-lg font-semibold text-gray-700">Contoh Response (Sukses 200):</h4>
+        <div class="mt-2 bg-gray-900 text-white p-4 rounded-md text-sm overflow-x-auto">
+            <pre><code>{
+    "api_info": {
+        "api_name": "API Scraper Jadwal Sholat",
+        "version": "1.0",
+        "author": "mhcode",
+        "source": "jadwalsholat.org"
+    },
+    "data": {
+        "lokasi": "KAB. BOGOR",
+        "bulan": "September 2025",
+        "jadwal": [
+            {
+                "tanggal": {
+                    "masehi": "01",
+                    "hijriyah": "08 Rabi'ul Awal"
+                },
+                "waktu": {
+                    "imsyak": "04:03",
+                    "shubuh": "04:13",
+                    "terbit": "05:27",
+                    "dhuha": "05:51",
+                    "dzuhur": "11:30",
+                    "ashr": "14:49",
+                    "maghrib": "17:28",
+                    "isya": "18:38"
+                }
+            },
+            // ... (data untuk hari-hari berikutnya)
+        ]
+    }
+}</code></pre>
+        </div>
+    </div>
+</div>

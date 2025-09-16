@@ -1,0 +1,74 @@
+<div>
+    <h1 class="text-4xl font-extrabold text-gray-900 tracking-tight">API Rukun Islam & Rukun Iman</h1>
+    <p class="mt-4 text-lg text-gray-600">
+        Mengembalikan data JSON terstruktur mengenai Rukun Islam dan Rukun Iman. Data ini bersifat statis dan langsung diambil dari server.
+    </p>
+
+    <hr class="my-10">
+
+    <div>
+        <h2 class="text-2xl font-bold text-gray-800">Endpoint Utama</h2>
+        <p class="mt-2 text-gray-500">Gunakan endpoint ini untuk mendapatkan semua data.</p>
+        
+        <div class="mt-4 bg-gray-900 rounded-lg p-4 font-mono text-sm text-white flex items-center justify-between">
+            <div>
+                <span class="font-bold text-green-400">GET</span>
+                <span class="text-gray-400 ml-3">/api/v1/rukun-islam</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-12">
+        <h4 class="text-lg font-semibold text-gray-700">Contoh Response (Sukses 200):</h4>
+        <div class="mt-2 bg-gray-900 text-white p-4 rounded-md text-sm overflow-x-auto">
+            <pre><code>{
+    "api_info": {
+        "api_name": "API Rukun Islam & Rukun Iman",
+        "version": "1.0",
+        "author": "mhcode"
+    },
+    "data": {
+        "rukun_islam": [
+            {
+                "nomor": 1,
+                "nama": "Syahadat",
+                "keterangan": "Mengucapkan dua kalimat syahadat."
+            },
+            {
+                "nomor": 2,
+                "nama": "Sholat",
+                "keterangan": "Mendirikan sholat lima waktu."
+            },
+            {
+                "nomor": 3,
+                "nama": "Zakat",
+                "keterangan": "Menunaikan zakat."
+            },
+            {
+                "nomor": 4,
+                "nama": "Puasa Ramadhan",
+                "keterangan": "Berpuasa di bulan Ramadhan."
+            },
+            {
+                "nomor": 5,
+                "nama": "Haji",
+                "keterangan": "Menunaikan ibadah haji bagi yang mampu."
+            }
+        ],
+        "rukun_iman": [
+            {
+                "nomor": 1,
+                "nama": "Iman kepada Allah",
+                "keterangan": "Percaya bahwa Allah SWT adalah satu-satunya Tuhan."
+            },
+            {
+                "nomor": 2,
+                "nama": "Iman kepada Malaikat",
+                "keterangan": "Percaya kepada malaikat-malaikat ciptaan Allah."
+            }
+        ]
+    }
+}</code></pre>
+        </div>
+    </div>
+</div>

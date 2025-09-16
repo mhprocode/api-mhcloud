@@ -1,0 +1,57 @@
+<div>
+    <h1 class="text-4xl font-extrabold text-gray-900 tracking-tight">API Daftar Kota</h1>
+    <p class="mt-4 text-lg text-gray-600">
+        Mengambil seluruh daftar ID dan Nama Lokasi yang didukung oleh API Jadwal Sholat. Endpoint ini sangat berguna untuk menemukan <code class="text-sm bg-gray-100 p-1 rounded">id</code> yang akan digunakan sebagai parameter di endpoint <a href="/docs/jadwal-sholat" class="text-indigo-600 hover:underline">Jadwal Sholat</a>.
+    </p>
+
+    <hr class="my-10">
+
+    <div>
+        <h2 class="text-2xl font-bold text-gray-800">Endpoint Utama</h2>
+        <p class="mt-2 text-gray-500">Mengembalikan array berisi semua lokasi yang tersedia.</p>
+        
+        <div class="mt-4 bg-gray-900 rounded-lg p-4 font-mono text-sm text-white flex items-center justify-between">
+            <div>
+                <span class="font-bold text-green-400">GET</span>
+                <span class="text-gray-400 ml-3">/api/v1/daftar-kota</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-12">
+        <h3 class="text-xl font-bold text-gray-800">Parameter (Query)</h3>
+        <p class="mt-2 text-gray-600">Endpoint ini tidak memerlukan parameter apapun.</p>
+    </div>
+
+    <div class="mt-12">
+        <h4 class="text-lg font-semibold text-gray-700">Contoh Response (Sukses 200):</h4>
+        <div class="mt-2 bg-gray-900 text-white p-4 rounded-md text-sm overflow-x-auto">
+            <pre><code>{
+    "api_info": {
+        "api_name": "API Scraper Daftar Kota (ID Jadwal Sholat)",
+        "version": "1.0",
+        "author": "mhcode",
+        "source": "jadwalsholat.org"
+    },
+    "data": [
+        {
+            "id": "301",
+            "lokasi": "Watampone"
+        },
+        {
+            "id": "302",
+            "lokasi": "Watansoppeng"
+        },
+        {
+            "id": "303",
+            "lokasi": "Wates"
+        },
+        {
+            "id": "304",
+            "lokasi": "Wonogiri"
+        }
+    ]
+}</code></pre>
+        </div>
+    </div>
+</div>

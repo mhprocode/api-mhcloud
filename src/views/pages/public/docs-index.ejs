@@ -1,0 +1,47 @@
+<%- include('../../partials/header') %>
+<%- include('../../partials/navbar-public') %>
+
+<main class="bg-slate-50 min-h-screen">
+  <div class="container mx-auto py-20 px-4 sm:px-6 lg:px-8">
+    
+    <div class="text-center mb-12 max-w-2xl mx-auto">
+      <h1 class="text-4xl font-extrabold text-gray-900 sm:text-5xl tracking-tight">Dokumentasi API</h1>
+      <p class="mt-4 text-lg text-gray-600">
+        Pilih salah satu endpoint di bawah ini untuk melihat detail lengkap dan contoh penggunaan.
+      </p>
+    </div>
+    
+    <% if (docMenu && docMenu.length > 0) { %>
+      <div class="max-w-3xl mx-auto space-y-4">
+        <% docMenu.forEach(menuItem => { %>
+          
+          <a href="/docs/<%= menuItem.slug %>" 
+             class="group block bg-white p-6 rounded-lg shadow-sm hover:shadow-lg hover:border-indigo-500 border border-transparent transition-all duration-300">
+            
+            <div class="flex items-center justify-between">
+              <div>
+                <h2 class="text-xl font-bold text-slate-800 group-hover:text-indigo-600 transition-colors">
+                  <%= menuItem.nama %>
+                </h2>
+                <p class="mt-1 text-slate-500 text-sm">
+                  <%= menuItem.description %>
+                </p>
+              </div>
+
+              <div class="ml-4">
+                <svg class="w-6 h-6 text-slate-400 group-hover:text-indigo-600 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </div>
+            </div>
+          </a>
+
+        <% }) %>
+      </div>
+    <% } else { %>
+      <p class="text-center text-gray-500">Tidak ada dokumentasi yang ditemukan.</p>
+    <% } %>
+  </div>
+</main>
+
+<%- include('../../partials/footer') %>
