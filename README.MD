@@ -30,70 +30,83 @@ Proyek ini dibangun dari awal untuk menjadi terstruktur dan mudah dikembangkan.
 
 # stuktur file
 ```bash
-├── db.js
-├── index.js
-├── package.json
-├── package-lock.json
-├── prisma
-│   ├── dev.db
-│   ├── migrations
-│   │   ├── 20250909065855_init
-│   │   │   └── migration.sql
-│   │   ├── 20250909073548_add_users_roles_limits
-│   │   │   └── migration.sql
-│   │   ├── 20250909074852_add_user_ban_status
-│   │   │   └── migration.sql
-│   │   ├── 20250909080737_add_user_name_phone
-│   │   │   └── migration.sql
-│   │   └── migration_lock.toml
-│   └── schema.prisma
-├── README.MD
-├── registerAdmin.js
-├── src
-│   ├── api
-│   │   ├── admin.js
-│   │   ├── publicRoutes.js
-│   │   └── v1.js
-│   ├── controllers
-│   │   ├── adminController.js
-│   │   ├── apiController.js
-│   │   └── userController.js
-│   ├── docs_src
-│   │   ├── 1_rukun-islam.md
-│   │   └── 2_asah-otak.md
-│   ├── input.css
-│   ├── middleware
-│   │   ├── authAdmin.js
-│   │   ├── authApiKey.js
-│   │   └── authUser.js
-│   ├── output.css
-│   ├── public
-│   │   └── css
-│   │       └── style.css
-│   ├── scrapers
-│   │   ├── asahOtakService.js
-│   │   └── rukunIslamScraper.js
-│   └── views
-│       ├── pages
-│       │   ├── dashboard.ejs
-│       │   ├── edit-user.ejs
-│       │   ├── history.ejs
-│       │   ├── ip-bans.ejs
-│       │   ├── keys.ejs
-│       │   ├── login.ejs
-│       │   ├── public
-│       │   │   ├── docs.ejs
-│       │   │   ├── landing.ejs
-│       │   │   ├── login.ejs
-│       │   │   └── register.ejs
-│       │   ├── user
-│       │   │   └── dashboard.ejs
-│       │   └── users.ejs
-│       └── partials
-│           ├── footer.ejs
-│           ├── header.ejs
-│           └── navbar.ejs
-└── tailwind.config.js
+|-- README.MD
+|-- db.js
+|-- index.js
+|-- package-lock.json
+|-- package.json
+|-- prisma
+|   |-- dev.db
+|   |-- migrations
+|   |   |-- 20250909065855_init
+|   |   |   `-- migration.sql
+|   |   |-- 20250909073548_add_users_roles_limits
+|   |   |   `-- migration.sql
+|   |   |-- 20250909074852_add_user_ban_status
+|   |   |   `-- migration.sql
+|   |   |-- 20250909080737_add_user_name_phone
+|   |   |   `-- migration.sql
+|   |   `-- migration_lock.toml
+|   `-- schema.prisma
+|-- registerAdmin.js
+|-- src
+|   |-- api
+|   |   |-- admin.js
+|   |   |-- publicRoutes.js
+|   |   `-- v1.js
+|   |-- controllers
+|   |   |-- adminController.js
+|   |   |-- apiController.js
+|   |   `-- userController.js
+|   |-- data
+|   |   |-- data-quran
+|   |-- input.css
+|   |-- middleware
+|   |   |-- authAdmin.js
+|   |   |-- authApiKey.js
+|   |   `-- authUser.js
+|   |-- output.css
+|   |-- public
+|   |   `-- css
+|   |       `-- style.css
+|   |-- scrapers
+|   |   |-- asahOtakService.js
+|   |   |-- daftarKotaScraper.js
+|   |   |-- jadwalSholatScraper.js
+|   |   |-- quranService.js
+|   |   |-- rukunIslamScraper.js
+|   |   `-- ytdlService.js
+|   `-- views
+|       |-- pages
+|       |   |-- dashboard.ejs
+|       |   |-- edit-user.ejs
+|       |   |-- history.ejs
+|       |   |-- ip-bans.ejs
+|       |   |-- keys.ejs
+|       |   |-- login.ejs
+|       |   |-- public
+|       |   |   |-- docs-detail.ejs
+|       |   |   |-- docs-index.ejs
+|       |   |   |-- docs.ejs
+|       |   |   |-- landing.ejs
+|       |   |   |-- login.ejs
+|       |   |   `-- register.ejs
+|       |   |-- user
+|       |   |   `-- dashboard.ejs
+|       |   `-- users.ejs
+|       `-- partials
+|           |-- docs
+|           |   |-- 0_rukun-islam.ejs
+|           |   |-- 1_alquran.ejs
+|           |   |-- 2_jadwal-sholat.ejs
+|           |   |-- 3_daftar-kota.ejs
+|           |   |-- 4_asah-otak.ejs
+|           |   `-- 5_youtube-downloader.ejs
+|           |-- footer.ejs
+|           |-- header.ejs
+|           |-- navbar-public.ejs
+|           `-- navbar.ejs
+`-- tailwind.config.js
 ```
 
 
