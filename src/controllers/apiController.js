@@ -143,9 +143,6 @@ export const getYoutubeVideo = async (req, res) => {
     try {
         const fullData = await getYoutubeInfo(url);
 
-        // --- INI PERUBAHANNYA ---
-        // Kita hanya akan mengambil 'videoWithAudio' dari hasil service.
-        // Array ini berisi semua format yang sudah memiliki video DAN audio tergabung.
         const videoData = {
             title: fullData.title,
             thumbnail: fullData.thumbnail,
@@ -153,12 +150,11 @@ export const getYoutubeVideo = async (req, res) => {
             channel: fullData.channel,
             formats: fullData.videoWithAudio.sort((a,b) => b.resolution.localeCompare(a.resolution, undefined, {numeric: true})) // Urutkan dari resolusi tertinggi
         };
-        // --- AKHIR PERUBAHAN ---
 
         res.status(200).json({
             api_info: { 
                 api_name: 'API YouTube MP4 Downloader (Video + Audio)',
-                version: '1.1', // Naikkan versi karena ada perubahan
+                version: '1.1',
                 author: 'mhcode'
             },
             data: videoData

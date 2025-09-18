@@ -217,27 +217,7 @@ Selesai (Backend)! Endpoint baru Anda (GET /api/v1/quote) sekarang aktif dan sec
 
 ## 4. Buat Dokumentasi (Frontend)
 Ini adalah langkah termudah berkat sistem dokumentasi dinamis kita.
-- Buat File Baru: src/docs_src/4_quotes.md (Gunakan nomor berikutnya agar urut).
-```bash
-## API Quotes Motivasi
 
-Mengembalikan satu kutipan (quote) motivasi secara acak.
-
-```html
-GET /api/v1/quote
-Contoh Response (Sukses 200):
-{
-    "api_info": {
-        "api_name": "API Quotes Motivasi",
-        "version": "1.0",
-        "author": "mhcode"
-    },
-    "data": {
-        "author": "Nelson Mandela",
-        "quote": "Pendidikan adalah senjata paling ampuh..."
-    }
-}
-```
 
 # Developer
 - instagram : @nata_wfc
